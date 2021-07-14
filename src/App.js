@@ -1,29 +1,43 @@
 import React, { useState } from "react";
 import LoginForm from "./components/LoginForm";
+import Home from "./components/Home";
+import {Route, BrowserRouter as Router } from "react-router-dom";
 
 function App() {
-  const adminUser = {
-    email: "admin@gmail.com",
-    password: "admin123",
-  };
-  const [user, setUser] = useState({ name: "", email: "" });
+  const [user, setUser] = useState({
+   name: "",
+  email: "",
+  password: "",
+  date: "",
+  gender: "",
+  skills: [{}],
+  image: "",
+  age: "",});
 
-  const Login = (details) => {
-    console.log(details);
-    if ( details.email === adminUser.email && details.password === adminUser.password) {
-      console.log("logedin");
-      setUser({
-        email: details.email,
-        password:details.password
-      });
-    } else {
-      console.log("details do not match");
-    }
-  };
+  // const adminUser = {
+  //   email: "admin@gmail.com",
+  //   password: "admin123",
+  // };
+
+  // const Login = (details) => {
+  //   console.log(details);
+  //   if (
+  //     details.email === adminUser.email &&
+  //     details.password === adminUser.password
+  //   ) {
+  //     console.log("logedin");
+  //     setUser({
+  //       email: details.email,
+  //       password: details.password,
+  //     });
+  //   } else {
+  //     console.log("details do not match");
+  //   }
+  // };
 
   const Logout = () => {
     console.log("Logout");
-    setUser({name: "", email: ""});
+    setUser({ name: "", email: "" });
   };
 
   return (
@@ -35,8 +49,11 @@ function App() {
           </h2>
           <button onClick={Logout}>Logout</button>
         </div>
-      ) : (
-        <LoginForm Login={Login}/>
+      ) : (        
+        <Router>
+          <Route exact path="/LoginForm" component={LoginForm}/>
+          <Route  path="/" component={Home}/>
+        </Router>
       )}
     </div>
   );

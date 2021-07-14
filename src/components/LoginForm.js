@@ -1,27 +1,90 @@
-import React, { useState } from "react";
-import { Form, Input, Button, Checkbox } from "antd";
+import React, { useState} from "react";
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+import {
+  Form,
+  Input,
+  Button,
+  Radio,
+  Select,
+  DatePicker,
+  InputNumber,
+  Upload,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
+const { Option } = Select;
 
-function LoginForm({ Login, error }) {
-  const [details, setDetails] = useState({ name: "", email: "", password: "" });
+const LoginForm = (props) => {
+  // console.log("here wil recieve props => ", props);
+  const [details, setDetails] = useState({
+    name: "",
+    email: "",
+    password: "",
+    date: "",
+    gender: "",
+    skills: [{}],
+    image: "",
+    age: "",
+  });
+  console.log(details);
+  const normFile = (e) => {
+    console.log("Upload event:", e);
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    Login(details);
+    if (Array.isArray(e)) {
+      return e;
+    }
+
+    return e && e.fileList;
   };
+
+  const config = {
+    rules: [
+      {
+        type: "object",
+        required: true,
+        message: "Please select time!",
+      },
+    ],
+  };
+ 
+  let history = useHistory();
+
+  function handleClick() {
+    history.push("/home");
+  }
   return (
-    <Form name="basic" onSubmit={submitHandler}>
+    <Form name="basic">
       <Form.Item
         label="Username"
-        name="email"
+        name="name"
+        // "here ya ghada bykteb el email bta3ooooo ===> "
+        // احفظهولي بالقديمه القديمه  هتلي كل ال موجود في ال deatils
+        // { ...details, email: e.target.value }
         onChange={(e) => {
-          console.log(
-            "here ya ghada bykteb el email bta3ooooo ===> ",
-            e.target.value
-          );
+          // console.log(e.target.value);
+          // setDetails({ ...details, name: e.target.value });
+          // setDetails({date: moment, dateString: string});
+          console.log('here you will see the value of (e)',e);
+        }}
+        value={details.name}
+        rules={[{ required: true, message: "Please input your name!" }]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        name={["user", "email"]}
+        label="Email"
+        rules={[
+          {
+            type: "email",
+          },
+        ]}
+        value={details.email}
+        onChange={(e) => {
           setDetails({ ...details, email: e.target.value });
         }}
-        value={details.email}
-        rules={[{ required: true, message: "Please input your email!" }]}
       >
         <Input />
       </Form.Item>
@@ -37,39 +100,81 @@ function LoginForm({ Login, error }) {
       </Form.Item>
 
       <Form.Item
-        name="remember"
-        valuePropName="checked"
-        wrapperCol={{ offset: 8, span: 16 }}
+        name="date-picker"
+        label="DatePicker"
+        {...config}
+        // selected={ dueDate } 
+        //  value={details.date}
+        onChange={(e) => {
+        
+          console.log('hna el vlaue of (e)',e);
+          // setDetails({ ...details, date: moment});
+        }}
       >
-        <Checkbox>Remember me</Checkbox>
+        <DatePicker  defaultValue={moment('2015-01-01', 'YYYY-MM-DD')} />
+      </Form.Item>
+
+      <Form.Item
+        name="radio-group"
+        label="Gender"
+        onChange={(e) => {
+          setDetails({ ...details, gender: e.target.value });
+        }}
+      >
+        <Radio.Group>
+          <Radio value="mail">Mail</Radio>
+          <Radio value="femail">Femail</Radio>
+        </Radio.Group>
+      </Form.Item>
+      <Form.Item
+        name="select-multiple"
+        label="Skills"
+        rules={[
+          {
+            required: true,
+            message: "Please select your favourite colors!",
+            type: "array",
+          },
+        ]}
+      >
+        <Select mode="multiple" placeholder="Please select favourite colors">
+          <Option value="Bootstrap"> Bootstrap </Option>
+          <Option value="Javascript"> Javascript</Option>
+          <Option value="React.js"> React.js </Option>
+        </Select>
+      </Form.Item>
+      <Form.Item
+        name="upload"
+        label=" Your CV"
+        valuePropName="fileList"
+        getValueFromEvent={normFile}
+        extra=""
+        onChange={(e) => {
+          setDetails({ ...details, image: e.target.value });
+        }}
+      >
+        <Upload name="logo" action="/upload.do" listType="picture">
+          <Button icon={<UploadOutlined />}>Click to upload</Button>
+        </Upload>
+      </Form.Item>
+
+      <Form.Item
+        name={["user", "age"]}
+        label="Age"
+        rules={[{ type: "number", min: 0, max: 99 }]}
+        onChange={(e) => {
+          setDetails({ ...details, age: e.target.value });
+        }}
+      >
+        <InputNumber />
       </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit"onClick={handleClick} >
           Submit
         </Button>
       </Form.Item>
     </Form>
-
-    //   <form onSubmit={submitHandler}>
-    //       <div className="form-inner">
-    //         <h2>Login</h2>
-    //         {/*ERROR*/}
-    //         <div className="form-group">
-    //             <label htmlFor="name">Name:</label>
-    //             <input type="text" name="name" id="name" onChange={e => setDetails({...details, name:e.target.value})} value={details.name} />
-    //         </div>
-    //         <div className="form-group">
-    //             <label htmlFor="email">E-mail:</label>
-    //             <input type="email" name="email" id="email" onChange={e => setDetails({...details, email:e.target.value})} value={details.email} />
-    //         </div>
-    //         <div className="form-group">
-    //             <label htmlFor="Password">Password:</label>
-    //             <input type="password" name="password" id="password" onChange={e => setDetails({...details, password:e.target.value})} value={details.password} />
-    //         </div>
-    //         <input type="submit" value="LOGIN"/>
-    //       </div>
-    //   </form>
   );
-}
+};
 export default LoginForm;
